@@ -3,12 +3,11 @@ import java.io.FileReader;
 import java.io.IOException;
 
 public class PS6 {
-	public static int maxValue;
 
 	public static void main(String[] args) throws IOException {
 		int[] restaurants = readInputFromFile(args[0]);
 		int[][] table = createMemoTable(restaurants);
-		maxValue = findMaxValue(table);
+		int maxValue = findMaxValue(table);
 		int[] path = findOptimalPath(table);
 
 		System.out.println("Maximum Value: " + maxValue);

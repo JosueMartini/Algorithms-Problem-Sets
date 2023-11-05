@@ -3,12 +3,13 @@ import java.io.FileReader;
 import java.io.IOException;
 
 public class PS6 {
+	public static int maxValue;
+	public static int endRest;
 
 	public static void main(String[] args) throws IOException {
 		int[] restaurants = readInputFromFile(args[0]);
-		int[][] table = createMemoTable(restaurants);
-		int maxValue = findMaxValue(table);
-		int[] path = findOptimalPath(table);
+		createMemoTable(restaurants);
+		int[] path = findOptimalPath(restaurants);
 
 		System.out.println("Maximum Value: " + maxValue);
 		System.out.println("\nPath");
@@ -42,6 +43,12 @@ public class PS6 {
 
 				table[i][j] = above + diagonal;
 
+				// FINDING MAXVALUE AND RESTAURANT WITH MAXVALUE
+				if (maxValue <= table[i][j]) {
+					maxValue = table[i][j];
+					endRest = j;
+				}
+
 			}
 		}
 
@@ -49,35 +56,33 @@ public class PS6 {
 
 	}
 
-	public static int[] findOptimalPath(int[][] table) {
+	public static int[] findOptimalPath(int[] restaurants) {
+		int[] path = new int[restaurants.length];
+		int currentRestaurant = endRest;
+		int currentMax = 0;
+		int count = 0;
 
-		// FINDING MAXVALUE AGAIN
-		int maxValue = 0;
-		int endRest = 0;
-		for (int i = 0; i < table.length; i++) {
-			if (maxValue < table[i][table.length - 1]) {
-				maxValue = table[i][table.length - 1];
-				endRest = i;
+		for (int i = 0; i < restaurants.length; i++) {
+			path[count] = currentRestaurant;
+			count++;
+			currentMax += restaurants[currentRestaurant];
+
+			//ENDS LOOP IF CURRENTMAX IS SAME AS MAXVALUE
+			if (currentMax == maxValue) {
+				i = restaurants.length + 1;
 			}
+
+			currentRestaurant = (currentRestaurant + 1) % restaurants.length;
 		}
 
-		// FINDING OPTIMAL PATH
-		int currRestaurant = endRest;
-		int[] path = new int[table.length];
+		//CREATING CORRECT SIZED ARRAY
+		int[] resultPath = new int[count];
 
-		return path;
-	}
-
-	public static int findMaxValue(int[][] table) {
-		int maxValue = 0;
-		for (int i = 0; i < table.length; i++) {
-			if (maxValue < table[i][table.length - 1]) {
-				maxValue = table[i][table.length - 1];
-			}
+		for (int i = 0; i < count; i++) {
+			resultPath[i] = path[i];
 		}
 
-		return maxValue;
-
+		return resultPath;
 	}
 
 	public static int[] readInputFromFile(String inputFile) throws IOException {
